@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pennsylvania's Energy Revolution: 2005–2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0f14; color: #e8e6e0; font-family: 'Inter', sans-serif; min-height: 100vh; padding: 40px 24px; }
+  .container { max-width: 1000px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #f0a832; margin-bottom: 10px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px, 4vw, 40px); font-weight: 900; line-height: 1.1; color: #f5f2ec; margin-bottom: 12px; }
+  .subtitle { font-size: 14px; color: #9b9790; line-height: 1.6; max-width: 680px; margin-bottom: 28px; }
+  .legend { display: flex; gap: 24px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #7a7874; }
+  .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+  .legend-dashed { width: 24px; height: 0; border-top: 3px dashed; }
+  .chart-wrapper { background: #13151c; border: 1px solid #1e2028; border-radius: 12px; padding: 20px 20px 14px; margin-bottom: 16px; }
+  .zone-labels { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .zone-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.35; }
+  .zone-label.left { color: #f0a832; } .zone-label.right { color: #4a9eff; }
+  .source { font-size: 11px; color: #252830; text-align: right; margin-top: 8px; }
+
+  .callouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 24px; }
+  @media (max-width: 700px) { .callouts { grid-template-columns: 1fr 1fr; } }
+  .callout { display: flex; align-items: flex-start; gap: 9px; background: #13151c; border: 1px solid #1e2028; border-radius: 8px; padding: 10px 12px; }
+  .callout-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; border: 1.5px solid; }
+  .callout-body { flex: 1; }
+  .callout-year { font-weight: 600; font-size: 11px; display: block; margin-bottom: 2px; }
+  .callout-desc { color: #555; font-size: 10px; line-height: 1.4; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+  .stat-card { background: #13151c; border: 1px solid #1e2028; border-radius: 8px; padding: 14px 16px; }
+  .stat-label { font-size: 9px; color: #444; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 2px; }
+  .stat-desc { font-size: 10px; color: #444; }
+  .amber { color: #f0a832; } .blue { color: #4a9eff; } .red { color: #e05c5c; }
+
+  .finding { background: #13151c; border-left: 3px solid #f0a832; border-radius: 0 8px 8px 0; padding: 14px 18px; font-size: 13px; color: #9b9790; line-height: 1.6; }
+  .finding strong { color: #f5f2ec; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="eyebrow">Pennsylvania Energy Analysis · 2005–2025</div>
+  <h1>The Smoking Gun:<br>How Fracking Killed Coal</h1>
+  <p class="subtitle">Pennsylvania's coal collapse was set in motion before our dataset begins. The Marcellus Shale fracking boom built gas infrastructure so fast that coal became structurally uncompetitive — regardless of prices or politics.</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-line" style="background:#f0a832;"></div>Gas production (MMcf, scaled)</div>
+    <div class="legend-item"><div class="legend-line" style="background:#e05c5c;"></div>Coal generation (Thousand MWh)</div>
+    <div class="legend-item"><div class="legend-dashed" style="border-color:#5ccc8a;"></div>&nbsp;Gas generation (Thousand MWh)</div>
+  </div>
+
+  <div class="chart-wrapper">
+    <div class="zone-labels">
+      <span class="zone-label left">◀ Marcellus Shale boom</span>
+      <span class="zone-label right">Coal collapse ▶</span>
+    </div>
+    <div style="position:relative; height:460px;">
+      <canvas id="timeline" role="img" aria-label="Pennsylvania energy timeline 2005-2025"></canvas>
+    </div>
+    <p class="source">Source: U.S. Energy Information Administration (EIA)</p>
+  </div>
+
+  <div class="callouts">
+    <div class="callout">
+      <div class="callout-num" style="border-color:#e05c5c;color:#e05c5c;">1</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#e05c5c;">2008 — Crisis</span>
+        <span class="callout-desc">Coal dips but holds. Still dominant by a wide margin.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#f0a832;color:#f0a832;">2</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#f0a832;">2010 — Boom</span>
+        <span class="callout-desc">PA gas production triples in one year.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#5ccc8a;color:#5ccc8a;">3</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#5ccc8a;">2012 — $1.95</span>
+        <span class="callout-desc">Historic gas price low. Capital floods into Marcellus.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#f0a832;color:#f0a832;">4</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#f0a832;">2014 — Tipping pt.</span>
+        <span class="callout-desc">Gas capacity matches coal's entire output.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#ffffff;color:#ffffff;">5</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#ffffff;">2016 — Crossover</span>
+        <span class="callout-desc">Gas exceeds coal for first time. Irreversible.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#e05c5c;color:#e05c5c;">6</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#e05c5c;">2019 — Bruce Mansfield</span>
+        <span class="callout-desc">PA's largest coal plant (2,490 MW) shuts down in Shippingport. Homer City (1,884 MW) follows in 2023.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#e05c5c;color:#e05c5c;">7</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#e05c5c;">2020 — COVID</span>
+        <span class="callout-desc">Coal craters. Demand recovers — coal doesn't.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-num" style="border-color:#e05c5c;color:#e05c5c;">8</div>
+      <div class="callout-body">
+        <span class="callout-year" style="color:#e05c5c;">2023 — Historic low</span>
+        <span class="callout-desc">Coal hits 12,835K MWh — just 10% of its 2005 peak.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Gas production</div>
+      <div class="stat-value amber">+4,455%</div>
+      <div class="stat-desc">2005 → 2025</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Coal collapse</div>
+      <div class="stat-value red">−89%</div>
+      <div class="stat-desc">2005 → 2023</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Crossover</div>
+      <div class="stat-value blue">2016</div>
+      <div class="stat-desc">Gas exceeded coal</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">R² capacity vs coal</div>
+      <div class="stat-value red">0.92</div>
+      <div class="stat-desc">Near-perfect inverse</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <strong>Key finding:</strong> Gas prices had virtually zero correlation with coal's decline (R²=0.005). The real driver was gas generation <em>capacity</em> — infrastructure built during the Marcellus Shale boom made coal structurally uncompetitive before this dataset even begins.
+  </div>
+</div>
+
+<script>
+const GAS_MAX = 7675792;
+const DISPLAY_MAX = 140000;
+const SCALE = DISPLAY_MAX / GAS_MAX;
+
+const gasProductionRaw = [
+  {x:2005,y:168501},{x:2006,y:175950},{x:2007,y:182277},{x:2008,y:198295},
+  {x:2009,y:273869},{x:2010,y:572902},{x:2011,y:1310592},{x:2012,y:2256696},
+  {x:2013,y:3259042},{x:2014,y:4257693},{x:2015,y:4812983},{x:2016,y:5210209},
+  {x:2017,y:5453638},{x:2018,y:6264832},{x:2019,y:6896792},{x:2020,y:7168902},
+  {x:2021,y:7647068},{x:2022,y:7513567},{x:2023,y:7565634},{x:2024,y:7422303},
+  {x:2025,y:7675792}
+];
+const coalGen = [
+  {x:2005,y:120933},{x:2006,y:122558},{x:2007,y:122693},{x:2008,y:117583},
+  {x:2009,y:105475},{x:2010,y:110369},{x:2011,y:100603},{x:2012,y:87148},
+  {x:2013,y:88443},{x:2014,y:78986},{x:2015,y:64637},{x:2016,y:54672},
+  {x:2017,y:47634},{x:2018,y:44086},{x:2019,y:37929},{x:2020,y:23458},
+  {x:2021,y:29297},{x:2022,y:23930},{x:2023,y:12835},{x:2024,y:13042},{x:2025,y:17586}
+];
+const gasGen = [
+  {x:2005,y:10808},{x:2006,y:13542},{x:2007,y:19198},{x:2008,y:18731},
+  {x:2009,y:29215},{x:2010,y:33718},{x:2011,y:41792},{x:2012,y:53062},
+  {x:2013,y:49938},{x:2014,y:53021},{x:2015,y:59455},{x:2016,y:68049},
+  {x:2017,y:72503},{x:2018,y:76391},{x:2019,y:98040},{x:2020,y:120767},
+  {x:2021,y:126665},{x:2022,y:130164},{x:2023,y:139256},{x:2024,y:143913},{x:2025,y:143753}
+];
+const scaledGasProd = gasProductionRaw.map(d => ({x: d.x, y: d.y * SCALE}));
+
+const calloutPoints = [
+  { year: 2008,     y: 117583,        color: '#e05c5c', num: 1 },
+  { year: 2010,     y: 572902 * SCALE,color: '#f0a832', num: 2 },
+  { year: 2012,     y: 53062,         color: '#5ccc8a', num: 3 },
+  { year: 2014.048, y: 78532,         color: '#f0a832', num: 4 },
+  { year: 2015.279, y: 61855,         color: '#ffffff', num: 5, ring: true },
+  { year: 2019,     y: 37929,         color: '#e05c5c', num: 6 },
+  { year: 2020,     y: 23458,         color: '#e05c5c', num: 7 },
+  { year: 2023,     y: 12835,         color: '#e05c5c', num: 8 },
+];
+
+// Floating text labels — placed in natural empty zones of the chart
+const floatingLabels = [
+  {
+    xVal: 2005.8, yVal: 150000,
+    lines: ['Coal was king', 'in Pennsylvania'],
+    color: '#e05c5c', size: 14, weight: '700', align: 'left'
+  },
+  {
+    xVal: 2021, yVal: 152000,
+    lines: ['Gas takes over', 'completely'],
+    color: '#5ccc8a', size: 14, weight: '700', align: 'left'
+  },
+  {
+    xVal: 2016.4, yVal: 74000,
+    lines: ['Point of', 'no return'],
+    color: '#ffffff', size: 13, weight: '700', align: 'left'
+  },
+  {
+    xVal: 2006.8, yVal: 26000,
+    lines: ['Marcellus Shale', 'fracking begins'],
+    color: '#f0a832', size: 12, weight: '700', align: 'left'
+  },
+];
+
+const annotationPlugin = {
+  id: 'calloutDots',
+  afterDraw(chart) {
+    const { ctx, scales, chartArea: ca } = chart;
+    const xS = scales.x, yS = scales.y;
+    ctx.save();
+
+    // Pre-2014 amber tint
+    const x2014 = xS.getPixelForValue(2014);
+    ctx.fillStyle = 'rgba(240,168,50,0.035)';
+    ctx.fillRect(ca.left, ca.top, x2014 - ca.left, ca.bottom - ca.top);
+
+    // Subtle 2014 divider
+    ctx.save();
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x2014, ca.top);
+    ctx.lineTo(x2014, ca.bottom);
+    ctx.stroke();
+    ctx.restore();
+
+    // ── Floating region labels ──
+    floatingLabels.forEach(fl => {
+      const px = xS.getPixelForValue(fl.xVal);
+      const py = yS.getPixelForValue(fl.yVal);
+      if (px < ca.left || px > ca.right || py < ca.top || py > ca.bottom) return;
+      ctx.textAlign = fl.align;
+      fl.lines.forEach((line, i) => {
+        ctx.font = `${fl.weight} ${fl.size}px 'Playfair Display', serif`;
+        ctx.fillStyle = fl.color;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 6; ctx.fillText(line, px, py + i * (fl.size + 4)); ctx.shadowBlur = 0;
+      });
+    });
+
+    // ── Numbered callout circles ──
+    calloutPoints.forEach(c => {
+      const px = xS.getPixelForValue(c.year);
+      const py = yS.getPixelForValue(c.y);
+      if (py < ca.top - 10 || py > ca.bottom + 10) return;
+
+      if (c.ring) {
+        ctx.beginPath();
+        ctx.arc(px, py, 15, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
+
+      // Dark fill
+      ctx.beginPath();
+      ctx.arc(px, py, 11, 0, Math.PI*2);
+      ctx.fillStyle = '#0d0f14';
+      ctx.fill();
+      ctx.strokeStyle = c.color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Number
+      ctx.font = "700 10px 'Inter', sans-serif";
+      ctx.fillStyle = c.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(c.num, px, py);
+      ctx.textBaseline = 'alphabetic';
+    });
+
+    ctx.restore();
+  }
+};
+
+Chart.register(annotationPlugin);
+
+const ctx = document.getElementById('timeline').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    datasets: [
+      { data: scaledGasProd, borderColor: '#f0a832', borderWidth: 2.5, pointRadius: 0, tension: 0.35, fill: false, parsing: false, order: 3 },
+      { data: coalGen,       borderColor: '#e05c5c', borderWidth: 2.5, pointRadius: 0, tension: 0.3,  fill: false, parsing: false, order: 1 },
+      { data: gasGen,        borderColor: '#5ccc8a', borderDash: [6,3], borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: false, parsing: false, order: 2 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { left: 4, right: 4, top: 8, bottom: 4 } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1d26', borderColor: '#2a2d38', borderWidth: 1,
+        titleColor: '#f5f2ec', bodyColor: '#9b9790', padding: 12,
+        callbacks: {
+          title: items => `Year: ${Math.round(items[0].parsed.x)}`,
+          label: item => {
+            if (item.datasetIndex === 0) {
+              const raw = gasProductionRaw.find(d => d.x === Math.round(item.parsed.x));
+              return raw ? ` Gas Production: ${(raw.y/1000).toLocaleString(undefined,{maximumFractionDigits:0})}B MMcf` : '';
+            }
+            if (item.datasetIndex === 1) return ` Coal: ${Math.round(item.parsed.y).toLocaleString()}K MWh`;
+            if (item.datasetIndex === 2) return ` Gas Gen: ${Math.round(item.parsed.y).toLocaleString()}K MWh`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: 'linear', min: 2005, max: 2025,
+        ticks: { stepSize: 1, color: '#3a3d48', font: { size: 11, family: 'Inter' }, callback: v => Number.isInteger(v) && v % 2 === 0 ? v : '' },
+        grid: { color: 'rgba(255,255,255,0.03)' }, border: { color: 'rgba(255,255,255,0.05)' }
+      },
+      y: {
+        min: 0, max: 165000,
+        ticks: { color: '#3a3d48', font: { size: 11, family: 'Inter' }, callback: v => v === 0 ? '0' : `${(v/1000).toFixed(0)}K` },
+        grid: { color: 'rgba(255,255,255,0.03)' }, border: { color: 'rgba(255,255,255,0.05)' },
+        title: { display: true, text: 'Generation (Thousand MWh)', color: '#3a3d48', font: { size: 10, family: 'Inter' } }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
